@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Gallery
+GenericName=Image & Video Gallery
+Comment=Fast, modern native Wayland gallery for images and videos
+Exec=miqugallery %F
+Icon=multimedia-photo-viewer
+Terminal=false
+Categories=Graphics;Photography;Viewer;2DGraphics;RasterGraphics;Video;AudioVideo;
+Keywords=gallery;photos;images;pictures;videos;viewer;photo;media;
+MimeType=image/jpeg;image/png;image/webp;image/gif;image/svg+xml;image/bmp;image/avif;image/heic;image/tiff;video/mp4;video/x-matroska;video/webm;video/x-msvideo;video/quicktime;video/ogg;
+StartupNotify=true

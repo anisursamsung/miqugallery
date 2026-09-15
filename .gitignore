@@ -1,0 +1,14 @@
+build/
+bin/
+lib/
+out/
+.cache/
+compile_commands.json
+*.o
+*.obj
+*.so
+*.a
+git_token_password
+*.token
+*.key
+.env
