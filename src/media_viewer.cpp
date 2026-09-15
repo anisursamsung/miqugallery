@@ -2,6 +2,9 @@
 #include <xkbcommon/xkbcommon-keysyms.h>
 #include <cstdlib>
 #include <iostream>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/wait.h>
 
 using namespace miqu;
 
@@ -196,8 +199,24 @@ void MediaViewer::open_external() {
     const auto* item = get_current_item();
     if (!item) return;
 
-    std::string cmd = "xdg-open \"" + item->path + "\" &";
-    std::system(cmd.c_str());
+    pid_t pid = fork();
+    if (pid == 0) {
+        if (fork() != 0) {
+            _exit(0);
+        }
+        setsid();
+        int devnull = open("/dev/null", O_RDWR);
+        if (devnull >= 0) {
+            dup2(devnull, STDIN_FILENO);
+            dup2(devnull, STDOUT_FILENO);
+            dup2(devnull, STDERR_FILENO);
+            close(devnull);
+        }
+        execlp("xdg-open", "xdg-open", item->path.c_str(), nullptr);
+        _exit(127);
+    } else if (pid > 0) {
+        waitpid(pid, nullptr, 0);
+    }
 }
 
 void MediaViewer::update_display() {
