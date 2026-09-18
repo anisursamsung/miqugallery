@@ -149,51 +149,15 @@ int main(int argc, char** argv) {
 
         for (size_t i = 0; i < albums.size(); ++i) {
             const auto& alb = albums[i];
-
-            auto card = std::make_shared<CardView>();
-            card->set_padding(8);
-            card->set_layout_params(LayoutParams(
-                static_cast<int>(LayoutDimension::MatchParent),
-                static_cast<int>(LayoutDimension::MatchParent)
-            ));
-
-            auto card_layout = std::make_shared<LinearLayout>(Orientation::Vertical);
-            card_layout->set_layout_params(LayoutParams(
-                static_cast<int>(LayoutDimension::MatchParent),
-                static_cast<int>(LayoutDimension::MatchParent)
-            ));
-
-            auto thumb = ImageViewBuilder::create()
-                ->imageResource(!alb.cover_path.empty() ? alb.cover_path : "folder-pictures")
-                ->fitMode(FitMode::Cover)
-                ->cornerRadius(8)
+            auto item = GridItemViewBuilder::create()
+                ->title(alb.name)
+                ->subtitle(alb.get_summary_text())
+                ->iconSource(!alb.cover_path.empty() ? alb.cover_path : "folder-pictures")
+                ->isImage(true)
                 ->qualityMode(ImageQuality::ThumbnailFast)
                 ->build();
-            thumb->set_layout_params(LayoutParams(
-                static_cast<int>(LayoutDimension::MatchParent),
-                135
-            ));
-            thumb->set_margin(0, 0, 0, 8);
 
-            auto name_lbl = TextViewBuilder::create()
-                ->text(alb.name)
-                ->bold(true)
-                ->build();
-            name_lbl->set_margin(4, 0, 4, 2);
-
-            auto count_lbl = TextViewBuilder::create()
-                ->text(alb.get_summary_text())
-                ->caption()
-                ->muted()
-                ->build();
-            count_lbl->set_margin(4, 0, 4, 4);
-
-            card_layout->add_view(thumb);
-            card_layout->add_view(name_lbl);
-            card_layout->add_view(count_lbl);
-            card->add_view(card_layout);
-
-            grid->add_item(card);
+            grid->add_item(item);
         }
 
         grid->set_on_item_click_listener([&](size_t idx, std::shared_ptr<View>) {
@@ -225,66 +189,15 @@ int main(int argc, char** argv) {
 
         for (size_t i = 0; i < album.items.size(); ++i) {
             const auto& item = album.items[i];
-
-            auto card = std::make_shared<CardView>();
-            card->set_padding(6);
-            card->set_layout_params(LayoutParams(
-                static_cast<int>(LayoutDimension::MatchParent),
-                static_cast<int>(LayoutDimension::MatchParent)
-            ));
-
-            auto card_layout = std::make_shared<LinearLayout>(Orientation::Vertical);
-            card_layout->set_layout_params(LayoutParams(
-                static_cast<int>(LayoutDimension::MatchParent),
-                static_cast<int>(LayoutDimension::MatchParent)
-            ));
-
-            auto thumb_container = std::make_shared<FrameLayout>();
-            thumb_container->set_layout_params(LayoutParams(
-                static_cast<int>(LayoutDimension::MatchParent),
-                115
-            ));
-            thumb_container->set_margin(0, 0, 0, 6);
-
-            auto thumb = ImageViewBuilder::create()
-                ->imageResource(item.path)
-                ->fitMode(FitMode::Cover)
-                ->cornerRadius(6)
+            auto grid_item = GridItemViewBuilder::create()
+                ->title(item.filename)
+                ->subtitle(item.type == MediaType::Video ? "▶ Video" : "")
+                ->iconSource(item.path)
+                ->isImage(true)
                 ->qualityMode(ImageQuality::ThumbnailFast)
                 ->build();
-            thumb->set_layout_params(LayoutParams(
-                static_cast<int>(LayoutDimension::MatchParent),
-                static_cast<int>(LayoutDimension::MatchParent)
-            ));
-            thumb_container->add_view(thumb);
 
-            if (item.type == MediaType::Video) {
-                auto video_badge = TextViewBuilder::create()
-                    ->text("▶ Video")
-                    ->caption()
-                    ->bold()
-                    ->build();
-                video_badge->set_layout_params(LayoutParams(
-                    static_cast<int>(LayoutDimension::WrapContent),
-                    static_cast<int>(LayoutDimension::WrapContent),
-                    Gravity::Bottom | Gravity::Left
-                ));
-                video_badge->set_margin(6, 0, 0, 6);
-                thumb_container->add_view(video_badge);
-            }
-
-            auto name_lbl = TextViewBuilder::create()
-                ->text(item.filename)
-                ->caption()
-                ->bold()
-                ->build();
-            name_lbl->set_margin(2, 0, 2, 2);
-
-            card_layout->add_view(thumb_container);
-            card_layout->add_view(name_lbl);
-            card->add_view(card_layout);
-
-            grid->add_item(card);
+            grid->add_item(grid_item);
         }
 
         grid->set_on_item_click_listener([&, album](size_t idx, std::shared_ptr<View>) {
