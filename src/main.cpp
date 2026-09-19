@@ -244,6 +244,7 @@ int main(int argc, char** argv) {
     // =========================================================================
     // PERSISTENT TOP HEADER BAR (Universal Toolbar)
     // =========================================================================
+    std::shared_ptr<Window> window;
     std::shared_ptr<ImageButton> btn_header_home;
 
     auto toolbar = ToolbarBuilder::create()
@@ -261,8 +262,9 @@ int main(int argc, char** argv) {
             nav_view->pop_to_root();
             nav_view->replace_top(create_albums_view(), "Albums", new_subtitle);
         })
-        ->onClose([engine]() {
-            engine->quit();
+        ->onClose([&window, engine]() {
+            if (window) window->request_close();
+            else engine->quit();
         })
         ->build();
     toolbar->set_back_visible(false);
@@ -296,7 +298,7 @@ int main(int argc, char** argv) {
     root_container->add_view(toolbar);
     root_container->add_view(nav_view);
 
-    auto window = WindowBuilder::create()
+    window = WindowBuilder::create()
         ->title("Gallery - miqugallery")
         ->appId("miqugallery")
         ->role(WindowRole::Toplevel)
